@@ -1,0 +1,47 @@
+#Claude
+.claude
+CLAUDE.md
+
+## Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.csproj.user
+
+## Build-Ausgaben
+[Bb]in/
+[Oo]bj/
+[Aa]rtifacts/
+Debug/
+Release/
+x64/
+x86/
+
+## Veröffentlichungs- und Paketdateien
+publish/
+*.nupkg
+*.snupkg
+packages/
+
+## Test- und Coverage-Ausgaben
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+## IDEs und temporäre Dateien
+.idea/
+*.rsuser
+*.userprefs
+*.sln.iml
+*.tmp
+*.temp
+*.log
+
+## Betriebssystem
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
