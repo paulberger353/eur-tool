@@ -29,6 +29,7 @@ KILOCODE.md
 *.userosscache
 *.sln.docstates
 *.csproj.user
+*.csproj
 *.vbproj.user
 *.vcxproj.user
 *.rsuser

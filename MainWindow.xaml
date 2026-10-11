@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:eur_tool" mc:Ignorable="d" 
-        Title="EÜR-Tool" WindowStyle="None"
+        Title="EÜR-Tool" Icon="Assets/eur-tool.ico" WindowStyle="None"
         ResizeMode="NoResize" Height="600" Width="1100">
     <Grid Background="#CCCCC3">
         <Grid.RowDefinitions>
@@ -22,25 +22,8 @@
                 <ColumnDefinition Width="0.095*"/>
             </Grid.ColumnDefinitions>
 
-            <Viewbox Grid.Column="0" Margin="14" Stretch="Uniform">
-                <Grid Width="48" Height="24">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="22"/>
-                        <ColumnDefinition Width="6"/>
-                        <ColumnDefinition Width="20"/>
-                    </Grid.ColumnDefinitions>
-
-                    <Border Grid.Column="0" BorderThickness="3" BorderBrush="#333333" CornerRadius="3" Background="Transparent" VerticalAlignment="Center" Height="20">
-                        <Ellipse Width="4" Height="4" Fill="#333333" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-
-                    <StackPanel Grid.Column="2" VerticalAlignment="Center" Orientation="Vertical">
-                        <Rectangle Height="4" Fill="#007ACC" RadiusX="1.5" RadiusY="1.5" Margin="0,0,0,3.5"/>
-                        <Rectangle Height="4" Fill="#333333" RadiusX="1.5" RadiusY="1.5" Margin="0,0,0,3.5"/>
-                        <Rectangle Height="4" Fill="#27AE60" RadiusX="1.5" RadiusY="1.5"/>
-                    </StackPanel>
-                </Grid>
-            </Viewbox>
+            <Image Grid.Column="0" Source="Assets/eur-tool.png" Width="36" Height="36"
+                   Margin="14,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
             <TextBlock Grid.Column="0" Grid.ColumnSpan="4" TextDecorations="Underline"
                        TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"
@@ -82,9 +65,37 @@
         </Grid>
         
         <!--Year Selection-->
-        <Grid Grid.Row="1"></Grid>
+        <Grid Grid.Row="1" x:Name="gridYearSelection">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel>
+                    <TextBlock Text="Jahr auswählen:" FontSize="20" Margin="0,0,0,10"
+                               HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                    <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="6" Margin="0,10,0,0">
+                        <ComboBox x:Name="cmbYear" Width="160" Height="32"
+                                  Background="Transparent" BorderThickness="0"
+                                  VerticalAlignment="Bottom" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    </Border>
+                </StackPanel>
+                <Button Content="Start" Click="btnConfirmYear_Click" 
+                        Margin="50,0,0,0" Height="40" Width="110"
+                        VerticalAlignment="Center" FontSize="16" FontWeight="Light">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="6">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
+        </Grid>
         
         <!--Main Frame-->
-        <Grid Grid.Row="1" Visibility="Hidden"></Grid>
+        <Grid Grid.Row="1" Visibility="Hidden" x:Name="gridMainFrame">
+            
+        </Grid>
     </Grid>
 </Window>

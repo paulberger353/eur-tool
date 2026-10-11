@@ -16,9 +16,17 @@ namespace eur_tool
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Controller? controller;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            //Startscreen laden
+            gridYearSelection.Visibility = Visibility.Visible;
+            gridMainFrame.Visibility = Visibility.Hidden;
+            cmbYear.ItemsSource = Enumerable.Range(2025, DateTime.Now.Year - 2024).Reverse();
+            cmbYear.SelectedItem = DateTime.Now.Year;
         }
 
         #region Window Events
@@ -58,6 +66,28 @@ namespace eur_tool
             }
 
             this.Close();
+        }
+
+        #endregion
+
+        #region Startscreen Events
+
+        /// <summary>
+        /// Methode wird nach der Jahr-Selektion aufgerufen, 
+        /// um das EÜR-Tool zu starten
+        /// </summary>
+        private void btnConfirmYear_Click(object sender, RoutedEventArgs e)
+        {
+            //Prüfe ob Jahr ausgewählt ist
+            if (cmbYear.SelectedItem is not int selectedYear)
+            {
+                return;
+            }
+
+            //Falls ja, mache MainFrame sichtbar und initialisiere Controller
+            controller = new Controller(this, selectedYear);
+            gridYearSelection.Visibility = Visibility.Collapsed;
+            gridMainFrame.Visibility = Visibility.Visible;
         }
 
         #endregion
