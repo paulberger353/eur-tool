@@ -1,47 +1,162 @@
-#Claude
-.claude
+# Persönliche KI-/Assistenten-Konfiguration
+.claude/
 CLAUDE.md
+.aider/
+.aider*
+.cursor/
+.windsurf/
+.continue/
+.cline/
+.roo/
+.gemini/
+.amazonq/
+.codeium/
+.tabnine/
+.kilocode/
+.cursorrules
+.windsurfrules
+.clinerules
+.roorules
+AGENTS.md
+GEMINI.md
+QWEN.md
+KILOCODE.md
 
-## Visual Studio
+# Visual Studio 2026 und lokale Benutzereinstellungen
 .vs/
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
 *.csproj.user
+*.vbproj.user
+*.vcxproj.user
+*.rsuser
+*.userprefs
+*.DotSettings.user
 
-## Build-Ausgaben
+# .NET- und Visual-Studio-Buildausgaben
 [Bb]in/
 [Oo]bj/
 [Aa]rtifacts/
-Debug/
-Release/
+[Dd]ebug/
+[Rr]elease/
+[Dd]ebugPublic/
+[Rr]eleasePublic/
 x64/
 x86/
+ARM/
+ARM64/
+TestResults/
+BenchmarkDotNet.Artifacts/
 
-## Veröffentlichungs- und Paketdateien
-publish/
+# Veröffentlichungen, Installer und Windows-Pakete
+[Pp]ublish/
+[Pp]ublish[Oo]utput/
+AppPackages/
+AppxPackages/
+BundleArtifacts/
+*.appx
+*.appxbundle
+*.msix
+*.msixbundle
+*.pdb
+*.dll
+*.exe
+
+# NuGet und Paketmanager
+packages/
 *.nupkg
 *.snupkg
-packages/
+*.nuget.g.props
+*.nuget.g.targets
+project.assets.json
+project.packagespec.json
+*.nuget.dgspec.json
 
-## Test- und Coverage-Ausgaben
-TestResults/
+# Test-, Analyse- und Coverage-Dateien
 coverage/
+CoverageReport/
+TestResults/
 *.coverage
 *.coveragexml
+*.trx
+*.opencover.xml
+*.cobertura.xml
+*.sarif
 
-## IDEs und temporäre Dateien
+# IDEs und Entwicklerwerkzeuge
 .idea/
-*.rsuser
-*.userprefs
 *.sln.iml
+*.resharper
+*.DotSettings.user
+*.sdf
+*.opensdf
+*.VC.db
+*.VC.VC.opendb
+.vscode/*.log
+
+# Lokale Konfiguration und Geheimnisse
+.env
+.env.*
+!.env.example
+*.local.json
+appsettings.*.local.json
+secrets.json
+secrets.*.json
+UserSecrets/
+
+# Lokale EÜR-Daten, Datenbanken und Sicherungen
+.eur-tool/
+local-data/
+user-data/
+data-local/
+backups/
+exports/
+imports/
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+*.bak
+*.backup
+
+# Temporäre Dateien und Protokolle
+[Ll]og/
+[Ll]ogs/
+*.log
 *.tmp
 *.temp
-*.log
+*.cache
+*.lock
+*.pid
+*.swp
+*.swo
+*~
+~$*
 
-## Betriebssystem
+# Codegeneratoren und generierte Dokumentation
+Generated/
+generated/
+docs/_site/
+
+# Betriebssystemdateien
 .DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+$RECYCLE.BIN/
+
+# Crash Dumps und Diagnoseausgaben
+*.dmp
+*.hdmp
+*.stackdump
+
+# Merge-/Patch-Reste
+*.orig
+*.rej
