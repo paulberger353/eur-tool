@@ -16,15 +16,15 @@ namespace eur_tool
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Controller? controller;
+        private Controller controller;
 
         public MainWindow()
         {
             InitializeComponent();
 
             //Startscreen laden
-            gridYearSelection.Visibility = Visibility.Hidden;
-            gridMainFrame.Visibility = Visibility.Visible;
+            gridYearSelection.Visibility = Visibility.Visible;
+            gridMainFrame.Visibility = Visibility.Hidden;
             cmbYear.ItemsSource = Enumerable.Range(2025, DateTime.Now.Year - 2024).Reverse();
             cmbYear.SelectedItem = DateTime.Now.Year;
         }
@@ -101,7 +101,15 @@ namespace eur_tool
         {
             if (sender is Button button)
             {
-                SetActiveSection(button);
+                //Bei Export-Button direkt Datenexport starten
+                if (button == btnExport)
+                {
+                    controller.ExportData();
+                }
+                else
+                {
+                    SetActiveSection(button);
+                }
             }
         }
 
