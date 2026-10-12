@@ -6,6 +6,13 @@
         xmlns:local="clr-namespace:eur_tool" mc:Ignorable="d" 
         Title="EÜR-Tool" Icon="Assets/eur-tool.ico" WindowStyle="None"
         ResizeMode="NoResize" Height="600" Width="1100">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Assets/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid Background="#CCCCC3">
         <Grid.RowDefinitions>
             <RowDefinition Height="0.1*"></RowDefinition>
@@ -22,7 +29,7 @@
                 <ColumnDefinition Width="0.095*"/>
             </Grid.ColumnDefinitions>
 
-            <Image Grid.Column="0" Source="Assets/eur-tool.png" Width="36" Height="36"
+            <Image Grid.Column="0" Source="Assets/eur-tool.png" Width="58" Height="58"
                    Margin="14,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
             <TextBlock Grid.Column="0" Grid.ColumnSpan="4" TextDecorations="Underline"
@@ -65,7 +72,7 @@
         </Grid>
         
         <!--Year Selection-->
-        <Grid Grid.Row="1" x:Name="gridYearSelection">
+        <Grid Grid.Row="1" x:Name="gridYearSelection" Visibility="Hidden">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <StackPanel>
                     <TextBlock Text="Jahr auswählen:" FontSize="20" Margin="0,0,0,10"
@@ -94,8 +101,28 @@
         </Grid>
         
         <!--Main Frame-->
-        <Grid Grid.Row="1" Visibility="Hidden" x:Name="gridMainFrame">
-            
+        <Grid Grid.Row="1" x:Name="gridMainFrame">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.2*"/>
+                <ColumnDefinition Width="0.8*"/>
+            </Grid.ColumnDefinitions>
+
+            <!--Sidebar-->
+            <StackPanel Grid.Column="0" Background="#E2E2DA" Margin="0,0,8,0" >
+                <Button x:Name="btnEinnahmen" Content="Einnahmen" Style="{StaticResource SidebarButton}" Click="SidebarButton_Click"/>
+                <Button x:Name="btnAusgaben" Content="Ausgaben" Style="{StaticResource SidebarButton}" Click="SidebarButton_Click"/>
+                <Button x:Name="btnTabelle" Content="Tabelle" Style="{StaticResource SidebarButton}" Click="SidebarButton_Click"/>
+                <Button x:Name="btnExport" Content="Export" Style="{StaticResource SidebarButton}" Click="SidebarButton_Click"/>
+                <Button x:Name="btnPlaceholder" Content="Platzhalter" Style="{StaticResource SidebarButton}" Click="SidebarButton_Click"/>
+            </StackPanel>
+
+
+            <Grid Grid.Column="1" x:Name="gridEinnahmen" />
+            <Grid Grid.Column="1" x:Name="gridAusgaben" />
+            <Grid Grid.Column="1" x:Name="gridTabelle" />
+            <Grid Grid.Column="1" x:Name="gridExport" />
+            <Grid Grid.Column="1" x:Name="gridPlaceholder"/>
+
         </Grid>
     </Grid>
 </Window>

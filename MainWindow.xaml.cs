@@ -23,8 +23,8 @@ namespace eur_tool
             InitializeComponent();
 
             //Startscreen laden
-            gridYearSelection.Visibility = Visibility.Visible;
-            gridMainFrame.Visibility = Visibility.Hidden;
+            gridYearSelection.Visibility = Visibility.Hidden;
+            gridMainFrame.Visibility = Visibility.Visible;
             cmbYear.ItemsSource = Enumerable.Range(2025, DateTime.Now.Year - 2024).Reverse();
             cmbYear.SelectedItem = DateTime.Now.Year;
         }
@@ -88,8 +88,46 @@ namespace eur_tool
             controller = new Controller(this, selectedYear);
             gridYearSelection.Visibility = Visibility.Collapsed;
             gridMainFrame.Visibility = Visibility.Visible;
+
+            //Klicke Standartmäßig Einnahmen
+            SetActiveSection(btnEinnahmen);
+
         }
 
-        #endregion
+        /// <summary>
+        /// Methode wird aufgerufen, wenn ein Button in der Sidebar geklickt wird
+        /// </summary>
+        private void SidebarButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button)
+            {
+                SetActiveSection(button);
+            }
+        }
+
+        /// <summary>
+        /// Methode wird aufgerufen um einzelnen Grids im MainFrame zu steuern
+        /// </summary>
+        /// <param name="activeButton">Button des jeweiligen Grids</param>
+        private void SetActiveSection(Button activeButton)
+        {
+            gridEinnahmen.Visibility = activeButton == btnEinnahmen ? Visibility.Visible : Visibility.Collapsed;
+            gridAusgaben.Visibility = activeButton == btnAusgaben ? Visibility.Visible : Visibility.Collapsed;
+            gridTabelle.Visibility = activeButton == btnTabelle ? Visibility.Visible : Visibility.Collapsed;
+            gridExport.Visibility = activeButton == btnExport ? Visibility.Visible : Visibility.Collapsed;
+            gridPlaceholder.Visibility = activeButton == btnPlaceholder ? Visibility.Visible : Visibility.Collapsed;
+
+            btnEinnahmen.Tag = activeButton == btnEinnahmen ? "Active" : null;
+            btnAusgaben.Tag = activeButton == btnAusgaben ? "Active" : null;
+            btnTabelle.Tag = activeButton == btnTabelle ? "Active" : null;
+            btnExport.Tag = activeButton == btnExport ? "Active" : null;
+            btnPlaceholder.Tag = activeButton == btnPlaceholder ? "Active" : null;
+        }
     }
+
+    #endregion
+
+    #region MainFrame Events
+
+    #endregion
 }
