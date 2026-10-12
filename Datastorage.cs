@@ -60,7 +60,7 @@ namespace eur_tool
 
 
                 string line;
-                while ((line = sr.ReadLine()) != null)
+                while ((line = Cryption.Decrypt(sr.ReadLine())) != null)
                 {
                     var parts = line.Split(';');
 
@@ -90,15 +90,15 @@ namespace eur_tool
                 //Schreibe Schema in die Kopfzeile
                 sw.WriteLine(schema);
 
-                //Schreibe Einnahmen/Ausgaben in die Datei
+                //Schreibe verschlüsselt Einnahmen/Ausgaben in die Datei
                 foreach (var e in einnahmen)
                 {
-                    sw.WriteLine(e.GetDataString());
+                    sw.WriteLine(Cryption.Encrypt(e.GetDataString()));
                 }
 
                 foreach (var a in ausgaben)
                 {
-                    sw.WriteLine(a.GetDataString());
+                    sw.WriteLine(Cryption.Encrypt(a.GetDataString()));
                 }
             }
         }
