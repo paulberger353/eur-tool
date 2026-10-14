@@ -96,6 +96,54 @@
                     </TextBlock>
                 </Grid>
             </TabItem>
+
+            <!--Tab Monatsübersicht-->
+            <TabItem Header="Monatsübersicht" Style="{StaticResource ViewTabItem}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <DataGrid Grid.Row="0" x:Name="gridMonths" Style="{StaticResource ViewGrid}"
+                              IsReadOnly="True" AutoGenerateColumns="False" CanUserSortColumns="False"
+                              VerticalAlignment="Top">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Monat" Width="*" MinWidth="140"
+                                                Binding="{Binding month, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Einnahmen" Width="160"
+                                                Binding="{Binding einnahmen, Mode=OneWay, StringFormat={}{0:N2} €}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Ausgaben" Width="160"
+                                                Binding="{Binding ausgaben, Mode=OneWay, StringFormat={}{0:N2} €}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Gewinn" Width="160"
+                                                Binding="{Binding gewinn, Mode=OneWay, StringFormat={}{0:N2} €}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!--Gesamtzeile-->
+                    <TextBlock Grid.Row="1" x:Name="txtTotal" Margin="0,10,0,0" TextWrapping="Wrap">
+                        <Run x:Name="runTotalText"/><Run x:Name="runTotalProfit"/>
+                    </TextBlock>
+                </Grid>
+            </TabItem>
         </TabControl>
     </Border>
 </UserControl>

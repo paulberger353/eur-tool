@@ -84,6 +84,13 @@ namespace eur_tool.Views
             runSumsCount.Text = sums.anzahl == 1 ? " · 1 Eintrag" : string.Format(de, " · {0} Einträge", sums.anzahl);
             SetProfitColor(runSumsProfit, sums.gewinn);
 
+            //Monatsübersicht mit Gesamtzeile des Jahres
+            gridMonths.ItemsSource = controller.GetMonthlySums();
+            var total = controller.GetSums(0);
+            runTotalText.Text = string.Format(de, "Gesamt {0}: Einnahmen {1:N2} € · Ausgaben {2:N2} € · Gewinn ", controller.selectedYear, total.einnahmen, total.ausgaben);
+            runTotalProfit.Text = string.Format(de, "{0:N2} €", total.gewinn);
+            SetProfitColor(runTotalProfit, total.gewinn);
+
             UpdateButtons();
         }
 
