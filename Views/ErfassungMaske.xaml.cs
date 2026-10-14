@@ -19,8 +19,15 @@ namespace eur_tool.Views
         private Controller? controller;
         private bool isAusgabe;
 
+        //Eintrag, der gerade bearbeitet wird (null im Neu-Modus)
+        private Buchung? editEntry;
+
+        //Wird nach "Änderung speichern" oder "Abbrechen" im Bearbeitungsmodus ausgelöst
+        public event EventHandler? EditFinished;
+
         //True, wenn Eingaben in der Maske stehen, die noch nicht gespeichert sind
         public bool HasPendingInput =>
+            editEntry != null ||
             !string.IsNullOrWhiteSpace(txtAmount.Text) ||
             !string.IsNullOrWhiteSpace(txtDescription.Text) ||
             !string.IsNullOrWhiteSpace(txtReceiptNo.Text);
@@ -50,19 +57,95 @@ namespace eur_tool.Views
             dpDate.DisplayDateStart = start;
             dpDate.DisplayDateEnd = end < start ? start : end;
 
-            txtTitle.Text = isAusgabe ? "Ausgabe erfassen" : "Einnahme erfassen";
-
             //Kategorie nur bei Ausgaben anzeigen
             Visibility categoryVisibility = isAusgabe ? Visibility.Visible : Visibility.Collapsed;
             lblCategory.Visibility = categoryVisibility;
             cmbCategory.Visibility = categoryVisibility;
             cmbCategory.ItemsSource = Ausgaben.Kategorien;
 
+            editEntry = null;
+            SetEditMode(false);
             ClearInputs(false);
         }
 
         /// <summary>
-        /// Methode wird aufgerufen, wenn "Speichern" geklickt oder Enter gedrückt wird
+        /// Methode startet den Bearbeitungsmodus mit den Werten eines aktiven Eintrags
+        /// </summary>
+        /// <param name="entry">Zu bearbeitender, aktiver Eintrag</param>
+        public void StartEdit(Buchung entry)
+        {
+            if (controller == null || !entry.isActive) return;
+
+            editEntry = entry;
+            ClearInputs(true);
+            txtSuccess.Text = "";
+            txtSuccess.Visibility = Visibility.Collapsed;
+
+            //Felder aus dem Eintrag befüllen
+            dpDate.SelectedDate = entry.date;
+            txtAmount.Text = entry.amount.ToString("0.00", de);
+            txtDescription.Text = entry.description;
+            txtReceiptNo.Text = entry.receiptNo;
+
+            if (isAusgabe)
+            {
+                //Unbekannte Kategorie (z. B. aus einer älteren Liste) vorübergehend ergänzen
+                if (!Ausgaben.Kategorien.Contains(entry.category))
+                {
+                    cmbCategory.ItemsSource = Ausgaben.Kategorien.Append(entry.category).ToList();
+                }
+
+                cmbCategory.SelectedItem = entry.category;
+            }
+
+            SetEditMode(true);
+        }
+
+        /// <summary>
+        /// Methode bricht den Bearbeitungsmodus ohne Änderung ab (löst kein Event aus)
+        /// </summary>
+        public void CancelEdit()
+        {
+            if (editEntry == null) return;
+
+            EndEdit();
+        }
+
+        /// <summary>
+        /// Methode beendet den Bearbeitungsmodus, leert die Felder und kehrt in den Neu-Modus zurück
+        /// </summary>
+        private void EndEdit()
+        {
+            editEntry = null;
+            ClearInputs(false);
+            SetEditMode(false);
+        }
+
+        /// <summary>
+        /// Methode schaltet Überschrift und Buttons zwischen Neu- und Bearbeitungsmodus um
+        /// </summary>
+        /// <param name="isEdit">True im Bearbeitungsmodus</param>
+        private void SetEditMode(bool isEdit)
+        {
+            string type = isAusgabe ? "Ausgabe" : "Einnahme";
+            txtTitle.Text = isEdit ? $"{type} bearbeiten" : $"{type} erfassen";
+            btnSave.Content = isEdit ? "Änderung speichern" : "Speichern";
+            btnCancel.Visibility = isEdit ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// Methode wird aufgerufen, wenn "Abbrechen" geklickt oder Esc gedrückt wird
+        /// </summary>
+        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            if (editEntry == null) return;
+
+            EndEdit();
+            EditFinished?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Methode wird aufgerufen, wenn "Speichern" bzw. "Änderung speichern" geklickt oder Enter gedrückt wird
         /// </summary>
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
@@ -80,6 +163,12 @@ namespace eur_tool.Views
                 ? new Ausgaben(date, amount, category, description, receiptNo)
                 : new Einnahmen(date, amount, description, receiptNo);
 
+            if (editEntry != null)
+            {
+                SaveEdit(editEntry, entry);
+                return;
+            }
+
             //Bei Fehlern bleiben alle Eingaben stehen
             if (!controller.AddEntry(entry))
             {
@@ -92,6 +181,31 @@ namespace eur_tool.Views
             //Datum für die Serienerfassung behalten
             ClearInputs(true);
             txtAmount.Focus();
+        }
+
+        /// <summary>
+        /// Methode speichert die Änderung eines Eintrags als neue Version
+        /// Ohne geändertes Feld wirkt sie wie "Abbrechen", damit keine leere neue Version entsteht
+        /// </summary>
+        /// <param name="oldEntry">Bisherige Version</param>
+        /// <param name="newEntry">Neue Version aus den Eingaben</param>
+        private void SaveEdit(Buchung oldEntry, Buchung newEntry)
+        {
+            bool unchanged =
+                newEntry.date == oldEntry.date &&
+                newEntry.amount == oldEntry.amount &&
+                newEntry.category == oldEntry.category &&
+                newEntry.description == oldEntry.description &&
+                newEntry.receiptNo == oldEntry.receiptNo;
+
+            //Bei Fehlern bleiben alle Eingaben stehen
+            if (!unchanged && !controller!.ReplaceEntry(oldEntry, newEntry))
+            {
+                return;
+            }
+
+            EndEdit();
+            EditFinished?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -233,6 +347,12 @@ namespace eur_tool.Views
             txtDescription.Text = "";
             txtReceiptNo.Text = "";
             cmbCategory.SelectedIndex = -1;
+
+            //Vorübergehend ergänzte Kategorie wieder entfernen
+            if (cmbCategory.ItemsSource != Ausgaben.Kategorien)
+            {
+                cmbCategory.ItemsSource = Ausgaben.Kategorien;
+            }
 
             if (!keepDate && controller != null)
             {

@@ -23,6 +23,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <!--Filter-->
@@ -43,7 +44,10 @@
                     <DataGrid Grid.Row="2" x:Name="gridEntries" Style="{StaticResource ViewGrid}"
                               RowStyle="{StaticResource ViewGridRowHistory}"
                               IsReadOnly="True" AutoGenerateColumns="False" SelectionMode="Single"
-                              CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="True">
+                              CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="True"
+                              SelectionChanged="gridEntries_SelectionChanged"
+                              MouseDoubleClick="gridEntries_MouseDoubleClick"
+                              PreviewKeyDown="gridEntries_PreviewKeyDown">
                         <DataGrid.Columns>
                             <DataGridTextColumn x:Name="colDate" Header="Datum" Width="90"
                                                 Binding="{Binding date, Mode=OneWay, StringFormat=dd.MM.yyyy}"/>
@@ -66,8 +70,16 @@
                         </DataGrid.Columns>
                     </DataGrid>
 
+                    <!--Aktionen für die ausgewählte, aktive Zeile-->
+                    <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button x:Name="btnEdit" Content="Bearbeiten" Style="{StaticResource ActionButton}" Margin="0,0,10,0"
+                                IsEnabled="False" Click="btnEdit_Click"/>
+                        <Button x:Name="btnDelete" Content="Löschen" Style="{StaticResource ActionButton}"
+                                IsEnabled="False" Click="btnDelete_Click"/>
+                    </StackPanel>
+
                     <!--Summenleiste-->
-                    <TextBlock Grid.Row="3" x:Name="txtSums" Margin="0,10,0,0" TextWrapping="Wrap">
+                    <TextBlock Grid.Row="4" x:Name="txtSums" Margin="0,10,0,0" TextWrapping="Wrap">
                         <Run x:Name="runSumsText"/><Run x:Name="runSumsProfit"/><Run x:Name="runSumsCount"/>
                     </TextBlock>
                 </Grid>

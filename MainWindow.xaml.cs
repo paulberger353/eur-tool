@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.ComponentModel;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -8,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using eur_tool.Transactiontypes;
 
 namespace eur_tool
 {
@@ -27,12 +29,17 @@ namespace eur_tool
             gridMainFrame.Visibility = Visibility.Hidden;
             cmbYear.ItemsSource = Enumerable.Range(2025, DateTime.Now.Year - 2024).Reverse();
             cmbYear.SelectedItem = DateTime.Now.Year;
+
+            //Ereignisse der Ansichten verbinden
+            tabelle.EditRequested += tabelle_EditRequested;
+            maskeEinnahmen.EditFinished += Maske_EditFinished;
+            maskeAusgaben.EditFinished += Maske_EditFinished;
         }
 
         #region Window Events
 
-        //True, wenn ungespeicherte Daten vorhanden
-        bool hasUnsavedChanges { get; set; } = false;
+        //True, wenn ungespeicherte Eingaben in einer Erfassungsmaske stehen
+        bool hasUnsavedChanges => maskeEinnahmen.HasPendingInput || maskeAusgaben.HasPendingInput;
 
         /// <summary>
         /// Methode wird aufgerufen um das Fenster im Hero zu verschieben
@@ -55,17 +62,24 @@ namespace eur_tool
         /// </summary>
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
-            //Wenn ungespeicherte Daten vorhanden sind, frag ab ob er wirklich schließen möchte
+            //Rückfrage erfolgt in Window_Closing
+            this.Close();
+        }
+
+        /// <summary>
+        /// Methode wird vor dem Schließen aufgerufen (auch bei Alt+F4)
+        /// </summary>
+        private void Window_Closing(object? sender, CancelEventArgs e)
+        {
+            //Wenn ungespeicherte Eingaben vorhanden sind, frag ab ob er wirklich schließen möchte
             if (hasUnsavedChanges)
             {
-                if (MessageBox.Show("Ungespeicherte Daten vorhanden. Wirklich schließen?", "Achtung", 
+                if (MessageBox.Show("Eingaben in der Erfassungsmaske sind noch nicht gespeichert. Wirklich schließen?", "Achtung",
                     MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
                 {
-                    return;
+                    e.Cancel = true;
                 }
             }
-
-            this.Close();
         }
 
         #endregion
@@ -136,6 +150,17 @@ namespace eur_tool
         /// <param name="activeButton">Button des jeweiligen Grids</param>
         private void SetActiveSection(Button activeButton)
         {
+            //Bearbeitung in einer verlassenen Maske ohne Rückfrage abbrechen
+            if (activeButton != btnEinnahmen)
+            {
+                maskeEinnahmen.CancelEdit();
+            }
+
+            if (activeButton != btnAusgaben)
+            {
+                maskeAusgaben.CancelEdit();
+            }
+
             gridEinnahmen.Visibility = activeButton == btnEinnahmen ? Visibility.Visible : Visibility.Collapsed;
             gridAusgaben.Visibility = activeButton == btnAusgaben ? Visibility.Visible : Visibility.Collapsed;
             gridTabelle.Visibility = activeButton == btnTabelle ? Visibility.Visible : Visibility.Collapsed;
@@ -153,6 +178,32 @@ namespace eur_tool
             {
                 tabelle.Refresh();
             }
+        }
+
+        /// <summary>
+        /// Methode wird aufgerufen, wenn in der Tabelle ein Eintrag bearbeitet werden soll
+        /// Erst die Maske aktivieren, dann die Bearbeitung starten (SetActiveSection bricht Bearbeitungen ab)
+        /// </summary>
+        private void tabelle_EditRequested(object? sender, Buchung entry)
+        {
+            if (entry is Einnahmen)
+            {
+                SetActiveSection(btnEinnahmen);
+                maskeEinnahmen.StartEdit(entry);
+            }
+            else if (entry is Ausgaben)
+            {
+                SetActiveSection(btnAusgaben);
+                maskeAusgaben.StartEdit(entry);
+            }
+        }
+
+        /// <summary>
+        /// Methode wird nach "Änderung speichern" oder "Abbrechen" in einer Maske aufgerufen
+        /// </summary>
+        private void Maske_EditFinished(object? sender, EventArgs e)
+        {
+            SetActiveSection(btnTabelle);
         }
     }
 

@@ -65,6 +65,8 @@
             <StackPanel Orientation="Horizontal" Margin="140,10,0,0">
                 <Button x:Name="btnSave" Content="Speichern" Style="{StaticResource ActionButtonPrimary}" IsDefault="True"
                         Click="btnSave_Click" Margin="0,0,10,0"/>
+                <Button x:Name="btnCancel" Content="Abbrechen" Style="{StaticResource ActionButton}" IsCancel="True"
+                        Click="btnCancel_Click" Visibility="Collapsed"/>
             </StackPanel>
 
             <!--Meldungen-->
