@@ -1,47 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace eur_tool.Transactiontypes
+﻿namespace eur_tool.Transactiontypes
 {
-    public class Ausgaben
+    public class Ausgaben : Buchung
     {
-        //Variablen der Ausgaben-Klasse
-        public DateTime date { get; private set; }
-        public int netto { get; private set; }
-        public int mwst { get; private set; }
-        public int brutto { get; private set; }
-        public string category { get; private set; }
-        public string comment { get; private set; }
+        //Feste Kategorien für Ausgaben
+        public static readonly string[] Kategorien =
+        {
+            "Wareneinkauf/Material",
+            "Fremdleistungen",
+            "Software & Lizenzen",
+            "Hardware/GWG (bis 800 €)",
+            "Telefon & Internet",
+            "Bürobedarf & Porto",
+            "Fortbildung & Fachliteratur",
+            "Reisekosten",
+            "Fahrtkosten",
+            "Raumkosten/Arbeitszimmer",
+            "Werbung & Marketing",
+            "Versicherungen & Beiträge",
+            "Bank- & Kontogebühren",
+            "Sonstiges"
+        };
 
-
-
+        //Typ der Buchung
+        public override string typeCode => "2";
+        public override string typeName => "Ausgabe";
 
         /// <summary>
         /// Konstruktor der Ausgaben-Klasse
-        /// Nimmt Ausgabe als Netto bzw Brutto entgegen
+        /// Nimmt die Ausgabe mit dem gezahlten Betrag entgegen (keine USt)
         /// </summary>
         /// <param name="_date">Datum der Ausgabe</param>
-        /// <param name="_betrag">Netto/Brutto-Betrag der Ausgabe</param>
-        /// <param name="isBrutto">Gibt an, ob der Betrag Brutto ist</param>
-        public Ausgaben(DateTime _date, int _betrag, bool isBrutto = false)
+        /// <param name="_amount">Gezahlter Betrag der Ausgabe</param>
+        /// <param name="_category">Kategorie der Ausgabe</param>
+        /// <param name="_description">Beschreibung der Ausgabe</param>
+        /// <param name="_receiptNo">Belegnummer der Ausgabe</param>
+        public Ausgaben(DateTime _date, decimal _amount, string _category, string _description, string _receiptNo)
         {
             date = _date;
-            category = "";
-            comment = "";
-
-            if (isBrutto)
-            {
-                brutto = _betrag;
-                netto = (int)Math.Round(brutto / 1.19);
-                mwst = brutto - netto;
-            }
-            else
-            {
-                netto = _betrag;
-                mwst = (int)Math.Round(netto * 0.19);
-                brutto = netto + mwst;
-            }
+            amount = _amount;
+            category = _category;
+            description = _description;
+            receiptNo = _receiptNo;
         }
 
         /// <summary>
@@ -51,15 +50,6 @@ namespace eur_tool.Transactiontypes
         public Ausgaben(string filepath)
         {
             //Drag&Drop von CSV-Datei in die GUI, automatisches auslesen via AI-API oder Tool
-        }
-
-        /// <summary>
-        /// Methode wird aufgerufen um die Daten der Ausgabe als String zurückzugeben
-        /// </summary>
-        /// <returns>Daten als String</returns>
-        public string GetDataString()
-        {
-            return $"2;{date};{netto};{mwst};{brutto};{category};{comment}";
         }
     }
 }
