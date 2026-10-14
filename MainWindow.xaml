@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:eur_tool" mc:Ignorable="d" 
         Title="EÜR-Tool" Icon="Assets/eur-tool.ico" WindowStyle="None"
-        ResizeMode="NoResize" Height="600" Width="1100">
+        ResizeMode="NoResize" Height="600" Width="1100" Language="de-DE">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
