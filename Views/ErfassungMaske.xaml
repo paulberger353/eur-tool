@@ -1,0 +1,68 @@
+﻿<UserControl x:Class="eur_tool.Views.ErfassungMaske"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" d:DesignHeight="540" d:DesignWidth="880"
+             IsVisibleChanged="UserControl_IsVisibleChanged">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Assets/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Border Style="{StaticResource ContentPanel}">
+        <StackPanel Margin="30">
+            <!--Überschrift-->
+            <TextBlock x:Name="txtTitle" Text="Einnahme erfassen" FontSize="20" FontWeight="Normal" Margin="0,0,0,20"/>
+
+            <!--Formular-->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="140"/>
+                    <ColumnDefinition Width="320"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Datum" Style="{StaticResource FormLabel}" Margin="0,0,0,10"/>
+                <DatePicker Grid.Row="0" Grid.Column="1" x:Name="dpDate" Style="{StaticResource FormDate}" Margin="0,0,0,10"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Betrag" Style="{StaticResource FormLabel}" Margin="0,0,0,4"/>
+                <Grid Grid.Row="1" Grid.Column="1" Margin="0,0,0,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" x:Name="txtAmount" Style="{StaticResource FormInput}" MaxLength="20"/>
+                    <TextBlock Grid.Column="1" Text="€" Style="{StaticResource FormLabel}" Margin="8,0,0,0"/>
+                </Grid>
+                <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource HintText}" Margin="0,0,0,10"
+                           Text="Gezahlten Betrag erfassen (Kleinunternehmer §19 UStG, keine USt)."/>
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Beschreibung" Style="{StaticResource FormLabel}" Margin="0,0,0,10"/>
+                <TextBox Grid.Row="3" Grid.Column="1" x:Name="txtDescription" Style="{StaticResource FormInput}" MaxLength="100" Margin="0,0,0,10"/>
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Belegnummer" Style="{StaticResource FormLabel}" Margin="0,0,0,10"/>
+                <TextBox Grid.Row="4" Grid.Column="1" x:Name="txtReceiptNo" Style="{StaticResource FormInput}" MaxLength="30" Margin="0,0,0,10"/>
+            </Grid>
+
+            <!--Buttons-->
+            <StackPanel Orientation="Horizontal" Margin="140,10,0,0">
+                <Button x:Name="btnSave" Content="Speichern" Style="{StaticResource ActionButtonPrimary}" IsDefault="True"
+                        Click="btnSave_Click" Margin="0,0,10,0"/>
+            </StackPanel>
+
+            <!--Meldungen-->
+            <TextBlock x:Name="txtError" Style="{StaticResource ErrorText}" Margin="140,14,0,0" Visibility="Collapsed"/>
+            <TextBlock x:Name="txtSuccess" Style="{StaticResource SuccessText}" Margin="140,14,0,0" Visibility="Collapsed"/>
+        </StackPanel>
+    </Border>
+</UserControl>

@@ -97,6 +97,9 @@ namespace eur_tool
                 return;
             }
 
+            //Ansichten mit dem Controller verbinden
+            maskeEinnahmen.Init(controller, false);
+
             //Mache MainFrame sichtbar
             gridYearSelection.Visibility = Visibility.Collapsed;
             gridMainFrame.Visibility = Visibility.Visible;
