@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using eur_tool.Transactiontypes;
@@ -247,7 +248,7 @@ namespace eur_tool.Views
         /// </summary>
         /// <param name="run">Textstück mit dem Gewinn</param>
         /// <param name="profit">Gewinn</param>
-        private void SetProfitColor(System.Windows.Documents.Run run, decimal profit)
+        private void SetProfitColor(Run run, decimal profit)
         {
             if (profit < 0)
             {
@@ -255,7 +256,7 @@ namespace eur_tool.Views
             }
             else
             {
-                run.ClearValue(System.Windows.Documents.TextElement.ForegroundProperty);
+                run.ClearValue(TextElement.ForegroundProperty);
             }
         }
 

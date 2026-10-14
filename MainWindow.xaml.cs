@@ -1,14 +1,7 @@
 ﻿using System.ComponentModel;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using eur_tool.Transactiontypes;
 
 namespace eur_tool
@@ -18,7 +11,8 @@ namespace eur_tool
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Controller controller;
+        //Controller, wird nach der Jahresauswahl gesetzt
+        private Controller? controller;
 
         public MainWindow()
         {
@@ -87,7 +81,7 @@ namespace eur_tool
         #region Startscreen Events
 
         /// <summary>
-        /// Methode wird nach der Jahr-Selektion aufgerufen, 
+        /// Methode wird nach der Jahr-Selektion aufgerufen,
         /// um das EÜR-Tool zu starten
         /// </summary>
         private void btnConfirmYear_Click(object sender, RoutedEventArgs e)
@@ -99,9 +93,10 @@ namespace eur_tool
             }
 
             //Falls ja, initialisiere Controller (lädt die Jahresdatei)
+            Controller newController;
             try
             {
-                controller = new Controller(this, selectedYear);
+                newController = new Controller(this, selectedYear);
             }
             catch (Exception ex)
             {
@@ -110,6 +105,8 @@ namespace eur_tool
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
+
+            controller = newController;
 
             //Ansichten mit dem Controller verbinden
             maskeEinnahmen.Init(controller, false);
@@ -125,11 +122,17 @@ namespace eur_tool
 
         }
 
+        #endregion
+
+        #region MainFrame Events
+
         /// <summary>
         /// Methode wird aufgerufen, wenn ein Button in der Sidebar geklickt wird
         /// </summary>
         private void SidebarButton_Click(object sender, RoutedEventArgs e)
         {
+            if (controller == null) return;
+
             if (sender is Button button)
             {
                 //Bei Export-Button direkt Datenexport starten
@@ -205,11 +208,7 @@ namespace eur_tool
         {
             SetActiveSection(btnTabelle);
         }
+
+        #endregion
     }
-
-    #endregion
-
-    #region MainFrame Events
-
-    #endregion
 }
