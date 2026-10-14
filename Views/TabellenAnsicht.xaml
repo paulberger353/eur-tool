@@ -34,6 +34,9 @@
                         <TextBlock Text="Monat:" Style="{StaticResource FormLabel}" Margin="24,0,8,0"/>
                         <ComboBox x:Name="cmbMonth" Style="{StaticResource FormCombo}" Width="150"
                                   SelectionChanged="Filter_Changed"/>
+                        <CheckBox x:Name="chkInactive" Content="Inaktive anzeigen" Margin="24,0,0,0" VerticalAlignment="Center"
+                                  Foreground="{StaticResource BrushText}"
+                                  Checked="Filter_Changed" Unchecked="Filter_Changed"/>
                     </StackPanel>
 
                     <!--Hinweis bei leerer Liste-->
@@ -49,6 +52,11 @@
                               MouseDoubleClick="gridEntries_MouseDoubleClick"
                               PreviewKeyDown="gridEntries_PreviewKeyDown">
                         <DataGrid.Columns>
+                            <!--Historienspalten nur mit Häkchen "Inaktive anzeigen"-->
+                            <DataGridTextColumn x:Name="colId" Header="Nr." Width="50" Visibility="Collapsed"
+                                                Binding="{Binding id, Mode=OneWay}"/>
+                            <DataGridTextColumn x:Name="colStatus" Header="Status" Width="80" Visibility="Collapsed"
+                                                Binding="{Binding statusName, Mode=OneWay}"/>
                             <DataGridTextColumn x:Name="colDate" Header="Datum" Width="90"
                                                 Binding="{Binding date, Mode=OneWay, StringFormat=dd.MM.yyyy}"/>
                             <DataGridTextColumn Header="Typ" Width="90"
@@ -67,6 +75,10 @@
                                                 Binding="{Binding description, Mode=OneWay}"/>
                             <DataGridTextColumn Header="Belegnr." Width="100"
                                                 Binding="{Binding receiptNo, Mode=OneWay}"/>
+                            <DataGridTextColumn x:Name="colCreatedAt" Header="Erfasst am" Width="125" Visibility="Collapsed"
+                                                Binding="{Binding createdAt, Mode=OneWay, StringFormat='dd.MM.yyyy HH:mm'}"/>
+                            <DataGridTextColumn x:Name="colDeactivatedAt" Header="Deaktiviert am" Width="125" Visibility="Collapsed"
+                                                Binding="{Binding deactivatedAt, Mode=OneWay, StringFormat='dd.MM.yyyy HH:mm'}"/>
                         </DataGrid.Columns>
                     </DataGrid>
 

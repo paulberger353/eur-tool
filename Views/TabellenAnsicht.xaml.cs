@@ -60,9 +60,17 @@ namespace eur_tool.Views
 
             int typeFilter = Math.Max(cmbType.SelectedIndex, 0);
             int month = Math.Max(cmbMonth.SelectedIndex, 0);
+            bool includeInactive = chkInactive.IsChecked == true;
+
+            //Historienspalten nur mit Häkchen anzeigen
+            Visibility historyVisibility = includeInactive ? Visibility.Visible : Visibility.Collapsed;
+            colId.Visibility = historyVisibility;
+            colStatus.Visibility = historyVisibility;
+            colCreatedAt.Visibility = historyVisibility;
+            colDeactivatedAt.Visibility = historyVisibility;
 
             //Einträge laden, Sortierung der Spalte übernehmen
-            var entries = controller.GetEntries(typeFilter, month, false);
+            var entries = controller.GetEntries(typeFilter, month, includeInactive);
             SetItemsKeepSort(entries);
 
             //Hinweis bei leerer Liste
