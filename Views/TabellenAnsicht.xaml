@@ -1,0 +1,77 @@
+﻿<UserControl x:Class="eur_tool.Views.TabellenAnsicht"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" d:DesignHeight="540" d:DesignWidth="880">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Assets/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Border Style="{StaticResource ContentPanel}">
+        <TabControl x:Name="tabView" Style="{StaticResource ViewTabControl}" Margin="12">
+
+            <!--Tab Einträge-->
+            <TabItem Header="Einträge" Style="{StaticResource ViewTabItem}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!--Filter-->
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBlock Text="Typ:" Style="{StaticResource FormLabel}" Margin="0,0,8,0"/>
+                        <ComboBox x:Name="cmbType" Style="{StaticResource FormCombo}" Width="130"
+                                  SelectionChanged="Filter_Changed"/>
+                        <TextBlock Text="Monat:" Style="{StaticResource FormLabel}" Margin="24,0,8,0"/>
+                        <ComboBox x:Name="cmbMonth" Style="{StaticResource FormCombo}" Width="150"
+                                  SelectionChanged="Filter_Changed"/>
+                    </StackPanel>
+
+                    <!--Hinweis bei leerer Liste-->
+                    <TextBlock Grid.Row="1" x:Name="txtEmpty" Style="{StaticResource HintText}" Margin="0,0,0,6"
+                               Visibility="Collapsed"/>
+
+                    <!--Einträge-->
+                    <DataGrid Grid.Row="2" x:Name="gridEntries" Style="{StaticResource ViewGrid}"
+                              RowStyle="{StaticResource ViewGridRowHistory}"
+                              IsReadOnly="True" AutoGenerateColumns="False" SelectionMode="Single"
+                              CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn x:Name="colDate" Header="Datum" Width="90"
+                                                Binding="{Binding date, Mode=OneWay, StringFormat=dd.MM.yyyy}"/>
+                            <DataGridTextColumn Header="Typ" Width="90"
+                                                Binding="{Binding typeName, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Betrag" Width="100"
+                                                Binding="{Binding amount, Mode=OneWay, StringFormat={}{0:N2} €}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Kategorie" Width="160"
+                                                Binding="{Binding category, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Beschreibung" Width="*" MinWidth="150"
+                                                Binding="{Binding description, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Belegnr." Width="100"
+                                                Binding="{Binding receiptNo, Mode=OneWay}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!--Summenleiste-->
+                    <TextBlock Grid.Row="3" x:Name="txtSums" Margin="0,10,0,0" TextWrapping="Wrap">
+                        <Run x:Name="runSumsText"/><Run x:Name="runSumsProfit"/><Run x:Name="runSumsCount"/>
+                    </TextBlock>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Border>
+</UserControl>

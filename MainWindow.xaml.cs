@@ -100,6 +100,7 @@ namespace eur_tool
             //Ansichten mit dem Controller verbinden
             maskeEinnahmen.Init(controller, false);
             maskeAusgaben.Init(controller, true);
+            tabelle.Init(controller);
 
             //Mache MainFrame sichtbar
             gridYearSelection.Visibility = Visibility.Collapsed;
@@ -146,6 +147,12 @@ namespace eur_tool
             btnTabelle.Tag = activeButton == btnTabelle ? "Active" : null;
             btnExport.Tag = activeButton == btnExport ? "Active" : null;
             btnPlaceholder.Tag = activeButton == btnPlaceholder ? "Active" : null;
+
+            //Tabelle beim Aktivieren neu laden
+            if (activeButton == btnTabelle)
+            {
+                tabelle.Refresh();
+            }
         }
     }
 

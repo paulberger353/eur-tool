@@ -277,7 +277,7 @@
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Padding="{TemplateBinding Padding}"
                             CornerRadius="6,6,0,0">
-                        <ContentPresenter ContentSource="Header" RecognizesAccessKey="True"
+                        <ContentPresenter x:Name="headerPresenter" ContentSource="Header" RecognizesAccessKey="True"
                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -287,7 +287,8 @@
                         <Trigger Property="IsSelected" Value="True">
                             <Setter Property="Background" Value="{StaticResource BrushActive}"/>
                             <Setter Property="BorderBrush" Value="{StaticResource BrushActiveBorder}"/>
-                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <!--Nur der Reiter fett, nicht der Inhalt des Tabs-->
+                            <Setter TargetName="headerPresenter" Property="TextElement.FontWeight" Value="SemiBold"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
