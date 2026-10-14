@@ -71,7 +71,7 @@
                             </DataGridTextColumn>
                             <DataGridTextColumn Header="Kategorie" Width="160"
                                                 Binding="{Binding category, Mode=OneWay}"/>
-                            <DataGridTextColumn Header="Beschreibung" Width="*" MinWidth="150"
+                            <DataGridTextColumn x:Name="colDescription" Header="Beschreibung" Width="*" MinWidth="150"
                                                 Binding="{Binding description, Mode=OneWay}"/>
                             <DataGridTextColumn Header="Belegnr." Width="100"
                                                 Binding="{Binding receiptNo, Mode=OneWay}"/>

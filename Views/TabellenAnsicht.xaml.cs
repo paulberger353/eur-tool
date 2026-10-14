@@ -21,6 +21,11 @@ namespace eur_tool.Views
         //Controller mit den Daten des gewählten Jahres
         private Controller? controller;
 
+        //Ursprüngliche Spaltenbreiten und Zustand der Historienspalten
+        private readonly Dictionary<DataGridColumn, DataGridLength> columnWidths = new Dictionary<DataGridColumn, DataGridLength>();
+        private bool historyShown = false;
+        private const double descriptionHistoryWidth = 200;
+
         //Wird ausgelöst, wenn ein aktiver Eintrag bearbeitet werden soll
         public event EventHandler<Buchung>? EditRequested;
 
@@ -40,6 +45,12 @@ namespace eur_tool.Views
 
             //Standardsortierung nach Datum aufsteigend
             colDate.SortDirection = ListSortDirection.Ascending;
+
+            //Ursprüngliche Spaltenbreiten merken
+            foreach (DataGridColumn column in gridEntries.Columns)
+            {
+                columnWidths[column] = column.Width;
+            }
         }
 
         /// <summary>
@@ -64,11 +75,10 @@ namespace eur_tool.Views
             bool includeInactive = chkInactive.IsChecked == true;
 
             //Historienspalten nur mit Häkchen anzeigen
-            Visibility historyVisibility = includeInactive ? Visibility.Visible : Visibility.Collapsed;
-            colId.Visibility = historyVisibility;
-            colStatus.Visibility = historyVisibility;
-            colCreatedAt.Visibility = historyVisibility;
-            colDeactivatedAt.Visibility = historyVisibility;
+            if (historyShown != includeInactive)
+            {
+                SetHistoryColumns(includeInactive);
+            }
 
             //Einträge laden, Sortierung der Spalte übernehmen
             var entries = controller.GetEntries(typeFilter, month, includeInactive);
@@ -205,6 +215,35 @@ namespace eur_tool.Views
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
             DeleteSelected();
+        }
+
+        /// <summary>
+        /// Methode blendet die Historienspalten ein bzw. aus und setzt die Spaltenbreiten zurück
+        /// </summary>
+        /// <param name="show">True, wenn die Historienspalten sichtbar sein sollen</param>
+        private void SetHistoryColumns(bool show)
+        {
+            //Beschreibung im Historienmodus mit fester Breite, damit die Tabelle waagerecht scrollt,
+            //statt die übrigen Spalten zu stauchen (Sternspalten nehmen sonst anderen Spalten Breite weg)
+            if (show)
+            {
+                colDescription.Width = new DataGridLength(descriptionHistoryWidth);
+            }
+
+            Visibility historyVisibility = show ? Visibility.Visible : Visibility.Collapsed;
+            colId.Visibility = historyVisibility;
+            colStatus.Visibility = historyVisibility;
+            colCreatedAt.Visibility = historyVisibility;
+            colDeactivatedAt.Visibility = historyVisibility;
+
+            foreach (var pair in columnWidths)
+            {
+                if (show && pair.Key == colDescription) continue;
+
+                pair.Key.Width = pair.Value;
+            }
+
+            historyShown = show;
         }
 
         /// <summary>
