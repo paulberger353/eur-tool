@@ -38,6 +38,175 @@ namespace eur_tool
         }
 
         /// <summary>
+        /// Methode gibt die Buchungen sortiert nach Datum, Id und Entstehungszeitpunkt zurück
+        /// </summary>
+        /// <param name="includeInactive">True, wenn auch inaktive Zeilen geliefert werden sollen</param>
+        /// <returns>Liste der Buchungen</returns>
+        public List<Buchung> GetAll(bool includeInactive = false)
+        {
+            return AllEntries()
+                .Where(b => includeInactive || b.isActive)
+                .OrderBy(b => b.date)
+                .ThenBy(b => b.id)
+                .ThenBy(b => b.createdAt)
+                .ToList();
+        }
+
+        /// <summary>
+        /// Methode wird aufgerufen um eine neue Buchung hinzuzufügen und sofort zu speichern
+        /// </summary>
+        /// <param name="entry">Neue Buchung</param>
+        public void Add(Buchung entry)
+        {
+            if (Contains(entry))
+            {
+                throw new InvalidOperationException("Die Buchung ist bereits gespeichert.");
+            }
+
+            DateTime now = Now();
+            int previousNextId = nextId;
+
+            AddToList(entry);
+            entry.SetHistory(nextId++, true, now, null);
+
+            try
+            {
+                SaveToFile();
+            }
+            catch
+            {
+                //Rollback: Speicher wieder auf den Stand der Datei bringen
+                RemoveFromList(entry);
+                nextId = previousNextId;
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Methode wird aufgerufen um eine Buchung zu ändern und sofort zu speichern
+        /// Die alte Version bleibt als inaktive Zeile erhalten, die neue bekommt dieselbe Id
+        /// </summary>
+        /// <param name="oldEntry">Bisherige, aktive Version</param>
+        /// <param name="newEntry">Neue Version</param>
+        public void Replace(Buchung oldEntry, Buchung newEntry)
+        {
+            if (oldEntry.GetType() != newEntry.GetType())
+            {
+                throw new ArgumentException("Alte und neue Buchung müssen vom gleichen Typ sein.");
+            }
+
+            if (!oldEntry.isActive || !Contains(oldEntry))
+            {
+                throw new InvalidOperationException("Nur aktive, gespeicherte Buchungen können geändert werden.");
+            }
+
+            if (Contains(newEntry))
+            {
+                throw new InvalidOperationException("Die neue Buchung ist bereits gespeichert.");
+            }
+
+            DateTime now = Now();
+
+            oldEntry.Deactivate(now, true);
+            newEntry.SetHistory(oldEntry.id, true, now, null);
+            AddToList(newEntry);
+
+            try
+            {
+                SaveToFile();
+            }
+            catch
+            {
+                //Rollback: neue Version entfernen, alte wieder aktiv setzen
+                RemoveFromList(newEntry);
+                oldEntry.UndoDeactivate();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Methode wird aufgerufen um eine Buchung zu löschen und sofort zu speichern
+        /// Die Zeile wird nur inaktiv gesetzt und bleibt in der Datei
+        /// </summary>
+        /// <param name="entry">Zu löschende, aktive Buchung</param>
+        public void Remove(Buchung entry)
+        {
+            if (!entry.isActive || !Contains(entry))
+            {
+                throw new InvalidOperationException("Nur aktive, gespeicherte Buchungen können gelöscht werden.");
+            }
+
+            entry.Deactivate(Now(), false);
+
+            try
+            {
+                SaveToFile();
+            }
+            catch
+            {
+                //Rollback: Buchung wieder aktiv setzen
+                entry.UndoDeactivate();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Methode gibt die aktuelle Zeit sekundengenau zurück (wie in der Datei gespeichert)
+        /// </summary>
+        /// <returns>Aktuelle Zeit ohne Millisekunden</returns>
+        private static DateTime Now()
+        {
+            DateTime now = DateTime.Now;
+            return new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+        }
+
+        /// <summary>
+        /// Methode prüft, ob genau dieses Objekt bereits in einer der Listen steht
+        /// </summary>
+        /// <param name="entry">Buchung</param>
+        /// <returns>True, wenn enthalten</returns>
+        private bool Contains(Buchung entry)
+        {
+            return AllEntries().Any(b => ReferenceEquals(b, entry));
+        }
+
+        /// <summary>
+        /// Methode fügt die Buchung der passenden Liste hinzu
+        /// </summary>
+        /// <param name="entry">Buchung</param>
+        private void AddToList(Buchung entry)
+        {
+            if (entry is Einnahmen e)
+            {
+                einnahmen.Add(e);
+            }
+            else if (entry is Ausgaben a)
+            {
+                ausgaben.Add(a);
+            }
+            else
+            {
+                throw new ArgumentException("Unbekannter Buchungstyp.");
+            }
+        }
+
+        /// <summary>
+        /// Methode entfernt die Buchung aus ihrer Liste (nur für den Rollback)
+        /// </summary>
+        /// <param name="entry">Buchung</param>
+        private void RemoveFromList(Buchung entry)
+        {
+            if (entry is Einnahmen e)
+            {
+                einnahmen.Remove(e);
+            }
+            else if (entry is Ausgaben a)
+            {
+                ausgaben.Remove(a);
+            }
+        }
+
+        /// <summary>
         /// Methode wird aufgerufen um Daten aus der Datei zu lesen
         /// </summary>
         private void ReadDataFromFile()

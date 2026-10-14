@@ -84,8 +84,20 @@ namespace eur_tool
                 return;
             }
 
-            //Falls ja, mache MainFrame sichtbar und initialisiere Controller
-            controller = new Controller(this, selectedYear);
+            //Falls ja, initialisiere Controller (lädt die Jahresdatei)
+            try
+            {
+                controller = new Controller(this, selectedYear);
+            }
+            catch (Exception ex)
+            {
+                //Bei Fehlern auf der Jahresauswahl bleiben
+                MessageBox.Show($"Daten für {selectedYear} konnten nicht geladen werden.\n\n{ex.Message}", "Fehler",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            //Mache MainFrame sichtbar
             gridYearSelection.Visibility = Visibility.Collapsed;
             gridMainFrame.Visibility = Visibility.Visible;
 
