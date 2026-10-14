@@ -30,6 +30,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Datum" Style="{StaticResource FormLabel}" Margin="0,0,0,10"/>
@@ -47,11 +48,17 @@
                 <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource HintText}" Margin="0,0,0,10"
                            Text="Gezahlten Betrag erfassen (Kleinunternehmer §19 UStG, keine USt)."/>
 
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="Beschreibung" Style="{StaticResource FormLabel}" Margin="0,0,0,10"/>
-                <TextBox Grid.Row="3" Grid.Column="1" x:Name="txtDescription" Style="{StaticResource FormInput}" MaxLength="100" Margin="0,0,0,10"/>
+                <!--Kategorie nur bei Ausgaben sichtbar-->
+                <TextBlock Grid.Row="3" Grid.Column="0" x:Name="lblCategory" Text="Kategorie" Style="{StaticResource FormLabel}" Margin="0,0,0,10"
+                           Visibility="Collapsed"/>
+                <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cmbCategory" Style="{StaticResource FormCombo}" Margin="0,0,0,10"
+                          Visibility="Collapsed"/>
 
-                <TextBlock Grid.Row="4" Grid.Column="0" Text="Belegnummer" Style="{StaticResource FormLabel}" Margin="0,0,0,10"/>
-                <TextBox Grid.Row="4" Grid.Column="1" x:Name="txtReceiptNo" Style="{StaticResource FormInput}" MaxLength="30" Margin="0,0,0,10"/>
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Beschreibung" Style="{StaticResource FormLabel}" Margin="0,0,0,10"/>
+                <TextBox Grid.Row="4" Grid.Column="1" x:Name="txtDescription" Style="{StaticResource FormInput}" MaxLength="100" Margin="0,0,0,10"/>
+
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="Belegnummer" Style="{StaticResource FormLabel}" Margin="0,0,0,10"/>
+                <TextBox Grid.Row="5" Grid.Column="1" x:Name="txtReceiptNo" Style="{StaticResource FormInput}" MaxLength="30" Margin="0,0,0,10"/>
             </Grid>
 
             <!--Buttons-->

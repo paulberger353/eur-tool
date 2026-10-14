@@ -121,7 +121,9 @@
             <Grid Grid.Column="1" x:Name="gridEinnahmen">
                 <views:ErfassungMaske x:Name="maskeEinnahmen"/>
             </Grid>
-            <Grid Grid.Column="1" x:Name="gridAusgaben" />
+            <Grid Grid.Column="1" x:Name="gridAusgaben">
+                <views:ErfassungMaske x:Name="maskeAusgaben"/>
+            </Grid>
             <Grid Grid.Column="1" x:Name="gridTabelle" />
             <Grid Grid.Column="1" x:Name="gridExport" />
             <Grid Grid.Column="1" x:Name="gridPlaceholder"/>

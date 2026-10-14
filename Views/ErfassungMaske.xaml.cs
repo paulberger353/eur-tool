@@ -52,6 +52,12 @@ namespace eur_tool.Views
 
             txtTitle.Text = isAusgabe ? "Ausgabe erfassen" : "Einnahme erfassen";
 
+            //Kategorie nur bei Ausgaben anzeigen
+            Visibility categoryVisibility = isAusgabe ? Visibility.Visible : Visibility.Collapsed;
+            lblCategory.Visibility = categoryVisibility;
+            cmbCategory.Visibility = categoryVisibility;
+            cmbCategory.ItemsSource = Ausgaben.Kategorien;
+
             ClearInputs(false);
         }
 
@@ -65,13 +71,13 @@ namespace eur_tool.Views
             txtSuccess.Text = "";
             txtSuccess.Visibility = Visibility.Collapsed;
 
-            if (!TryReadInput(out DateTime date, out decimal amount, out string description, out string receiptNo))
+            if (!TryReadInput(out DateTime date, out decimal amount, out string category, out string description, out string receiptNo))
             {
                 return;
             }
 
             Buchung entry = isAusgabe
-                ? new Ausgaben(date, amount, "", description, receiptNo)
+                ? new Ausgaben(date, amount, category, description, receiptNo)
                 : new Einnahmen(date, amount, description, receiptNo);
 
             //Bei Fehlern bleiben alle Eingaben stehen
@@ -92,7 +98,7 @@ namespace eur_tool.Views
         /// Methode prüft alle Eingaben, markiert ungültige Felder und zeigt alle Fehler auf einmal
         /// </summary>
         /// <returns>True, wenn alle Eingaben gültig sind</returns>
-        private bool TryReadInput(out DateTime date, out decimal amount, out string description, out string receiptNo)
+        private bool TryReadInput(out DateTime date, out decimal amount, out string category, out string description, out string receiptNo)
         {
             var errors = new List<string>();
             ClearErrors();
@@ -126,6 +132,21 @@ namespace eur_tool.Views
             {
                 errors.Add(amountError);
                 MarkError(txtAmount);
+            }
+
+            //Kategorie prüfen (nur bei Ausgaben)
+            category = "";
+            if (isAusgabe)
+            {
+                if (cmbCategory.SelectedItem is string selectedCategory)
+                {
+                    category = selectedCategory;
+                }
+                else
+                {
+                    errors.Add("Kategorie fehlt.");
+                    MarkError(cmbCategory);
+                }
             }
 
             //Texte prüfen
@@ -197,6 +218,7 @@ namespace eur_tool.Views
 
             dpDate.ClearValue(BorderBrushProperty);
             txtAmount.ClearValue(BorderBrushProperty);
+            cmbCategory.ClearValue(BorderBrushProperty);
             txtDescription.ClearValue(BorderBrushProperty);
             txtReceiptNo.ClearValue(BorderBrushProperty);
         }
@@ -210,6 +232,7 @@ namespace eur_tool.Views
             txtAmount.Text = "";
             txtDescription.Text = "";
             txtReceiptNo.Text = "";
+            cmbCategory.SelectedIndex = -1;
 
             if (!keepDate && controller != null)
             {
