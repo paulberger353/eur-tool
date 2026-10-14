@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Windows;
 using eur_tool.Transactiontypes;
 using Microsoft.Win32;
@@ -371,6 +372,34 @@ namespace eur_tool
         }
 
         /// <summary>
+        /// Methode wird aufgerufen um die aktiven Buchungen unverschlüsselt als CSV-Datei zu exportieren
+        /// UTF-8 mit BOM, damit Excel Umlaute korrekt anzeigt
+        /// </summary>
+        /// <param name="filepath">Zieldatei</param>
+        private void WriteExportFile(string filepath)
+        {
+            CultureInfo de = CultureInfo.GetCultureInfo("de-DE");
+
+            using (StreamWriter sw = new StreamWriter(filepath, false, new UTF8Encoding(true)))
+            {
+                //Schreibe Kopfzeile
+                sw.WriteLine("Typ;Datum;Betrag;Kategorie;Beschreibung;Belegnummer");
+
+                //Schreibe nur aktive Buchungen, sortiert nach Datum
+                foreach (var entry in GetAll())
+                {
+                    sw.WriteLine(string.Join(";",
+                        entry.typeName,
+                        entry.date.ToString("dd.MM.yyyy", de),
+                        entry.amount.ToString("0.00", de),
+                        entry.category,
+                        entry.description,
+                        entry.receiptNo));
+                }
+            }
+        }
+
+        /// <summary>
         /// Methode wird aufgerufen um die Daten in die eigene Datendatei zu speichern
         /// Schreibt zuerst in eine temporäre Datei und ersetzt dann die Datendatei
         /// </summary>
@@ -472,7 +501,7 @@ namespace eur_tool
                 Filter = "CSV-Dateien (*.csv)|*.csv|Alle Dateien (*.*)|*.*",
                 DefaultExt = ".csv",
                 AddExtension = true,
-                FileName = Path.GetFileName(dataFilepath),
+                FileName = $"eur_export_{year}.csv",
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                 OverwritePrompt = true
             };
@@ -482,9 +511,16 @@ namespace eur_tool
                 return;
             }
 
+            //Die eigene Datendatei darf nicht mit Klartext überschrieben werden
+            if (string.Equals(Path.GetFullPath(dialog.FileName), Path.GetFullPath(dataFilepath), StringComparison.OrdinalIgnoreCase))
+            {
+                MessageBox.Show("Die Datendatei kann nicht als Exportziel verwendet werden.", "Export nicht möglich", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             try
             {
-                WriteDataToFile(dialog.FileName);
+                WriteExportFile(dialog.FileName);
                 MessageBox.Show("Die Daten wurden erfolgreich exportiert.", "Export erfolgreich", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
