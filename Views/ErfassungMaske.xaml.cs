@@ -198,14 +198,46 @@ namespace eur_tool.Views
                 newEntry.description == oldEntry.description &&
                 newEntry.receiptNo == oldEntry.receiptNo;
 
-            //Bei Fehlern bleiben alle Eingaben stehen
-            if (!unchanged && !controller!.ReplaceEntry(oldEntry, newEntry))
+            if (!unchanged)
             {
-                return;
+                //Änderung bestätigen lassen, bei Nein bleibt die Maske im Bearbeitungsmodus
+                string question = string.Format(de,
+                    "Eintrag wirklich ändern?\n\nBisher: {0}\nNeu: {1}\n\nDie bisherige Fassung bleibt als „Ersetzt“ in der Historie (Häkchen „Inaktive anzeigen“).",
+                    EntrySummary(oldEntry), EntrySummary(newEntry));
+
+                if (MessageBox.Show(question, "Eintrag ändern", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                {
+                    return;
+                }
+
+                //Bei Fehlern bleiben alle Eingaben stehen
+                if (!controller!.ReplaceEntry(oldEntry, newEntry))
+                {
+                    return;
+                }
             }
 
             EndEdit();
             EditFinished?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Methode gibt einen Eintrag als kurze Zeile für Rückfragen zurück
+        /// </summary>
+        /// <param name="entry">Eintrag</param>
+        /// <returns>z. B. "12.03.2026 · 49,90 € · Software & Lizenzen · Domain · RE-1"</returns>
+        private static string EntrySummary(Buchung entry)
+        {
+            var parts = new List<string>
+            {
+                entry.date.ToString("dd.MM.yyyy", de),
+                entry.amount.ToString("N2", de) + " €",
+                entry.category,
+                entry.description,
+                entry.receiptNo
+            };
+
+            return string.Join(" · ", parts.Where(p => p != ""));
         }
 
         /// <summary>

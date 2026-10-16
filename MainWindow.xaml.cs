@@ -189,16 +189,21 @@ namespace eur_tool
         /// </summary>
         private void tabelle_EditRequested(object? sender, Buchung entry)
         {
-            if (entry is Einnahmen)
+            var mask = entry is Einnahmen ? maskeEinnahmen : maskeAusgaben;
+            var button = entry is Einnahmen ? btnEinnahmen : btnAusgaben;
+
+            //Ungespeicherte Eingaben in der Maske nicht ohne Rückfrage überschreiben
+            if (mask.HasPendingInput)
             {
-                SetActiveSection(btnEinnahmen);
-                maskeEinnahmen.StartEdit(entry);
+                if (MessageBox.Show("In der Erfassungsmaske stehen noch nicht gespeicherte Eingaben.\n\nEingaben verwerfen und den Eintrag bearbeiten?",
+                    "Eingaben verwerfen", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
+                {
+                    return;
+                }
             }
-            else if (entry is Ausgaben)
-            {
-                SetActiveSection(btnAusgaben);
-                maskeAusgaben.StartEdit(entry);
-            }
+
+            SetActiveSection(button);
+            mask.StartEdit(entry);
         }
 
         /// <summary>
